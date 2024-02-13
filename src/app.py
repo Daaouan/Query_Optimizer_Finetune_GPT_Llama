@@ -1,4 +1,6 @@
 from flask import Flask, request, jsonify
+from database.oracle_connection import create_connection,close_connection
+import oracledb
 from openai import OpenAI
 import os
 
@@ -7,6 +9,7 @@ app = Flask(__name__)
 @app.route("/")
 def hello_world():
     return "<p>Hello, World!</p>"
+
 
 @app.route('/chatbot', methods=['POST'])
 def chatbot():
@@ -50,6 +53,34 @@ def generate_response(query):
     print(chatbot_response)
 
     return chatbot_response
+
+@app.route('/results', methods=['GET'])
+def query_results():
+    query_param = request.json.get('query')
+
+    if not query_param:
+        return jsonify({'error': 'Query parameter is required'}), 400
+
+    connection = create_connection()
+
+    if connection:
+        try:
+            cursor = connection.cursor()
+            cursor.execute(query_param)
+            results = cursor.fetchall()
+
+            if results:
+                # Assuming the query returns a list of tuples
+                serialized_results = [dict(zip([desc[0] for desc in cursor.description], row)) for row in results]
+
+                return jsonify(serialized_results)
+            else:
+                return jsonify({'message': 'No results found for the given query'}), 404
+        except oracledb.Error as error:
+            print(f"Error executing query: {error}")
+            return jsonify({'error': 'Failed to retrieve results'}), 500
+        finally:
+            close_connection(connection, cursor)
 
 port_number = 5000
 
