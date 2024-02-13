@@ -3,8 +3,20 @@ from database.oracle_connection import create_connection,close_connection
 import oracledb
 from openai import OpenAI
 import os
+from transformers import AutoModelForCausalLM, AutoTokenizer, pipeline
+from peft import AutoPeftModelForCausalLM
+
 
 app = Flask(__name__)
+
+##pull llama2 model
+base_model = "frikh-said/query_optimizer_model"
+model = AutoPeftModelForCausalLM.from_pretrained(base_model, load_in_4bit=True)
+tokenizer = AutoTokenizer.from_pretrained(base_model, trust_remote_code=True)
+tokenizer.pad_token = tokenizer.eos_token
+tokenizer.padding_side = "right"
+pipe = pipeline(task="text-generation", model=model, tokenizer=tokenizer, max_length=300)
+
 
 @app.route("/")
 def hello_world():
@@ -12,18 +24,20 @@ def hello_world():
 
 
 @app.route('/chatbot', methods=['POST'])
-def chatbot():
+def chatbot(llm):
     # Get query from the request
     query = request.json.get('query')
     print(query)
 
     # Use own fine-tuned model to generate an optimized query
-    chatbot_response = generate_response(query)
-
+    if llm=='gpt':
+        chatbot_response = generate_response_gpt(query)
+    elif llm=='llama':
+        chatbot_response = generate_response_llama(query)
     # Return the response as JSON
     return jsonify({'chatbot_response': chatbot_response})
 
-def generate_response(query):
+def generate_response_gpt(query):
     my_skey = os.getenv("OPENAI_API_KEY")
     client = OpenAI(api_key=my_skey)
 
@@ -54,6 +68,19 @@ def generate_response(query):
 
     return chatbot_response
 
+
+
+def generate_response_llama(query):
+    prompt = "You are a chatbot specializing in optimizing SQL queries within the Oracle syntax ecosystem. Your primary functionality is to provide optimized query. "
+    result = pipe(f"<s>[INST] {prompt+query} [/INST]")
+    chatbot_response = result[0]['generated_text']
+
+    print(chatbot_response)
+
+    return chatbot_response
+
+
+
 @app.route('/results', methods=['GET'])
 def query_results():
     query_param = request.json.get('query')
@@ -81,6 +108,7 @@ def query_results():
             return jsonify({'error': 'Failed to retrieve results'}), 500
         finally:
             close_connection(connection, cursor)
+
 
 port_number = 5000
 
