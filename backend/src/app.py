@@ -10,7 +10,7 @@ from model import generate_response_gpt,generate_response_llama
 
 
 app = Flask(__name__)
-CORS(app)
+CORS(app, resources={r"*": {"origins": "http://localhost:3000"}})
 
 @app.route("/")
 def hello_world():
@@ -58,24 +58,33 @@ def query_results():
                 cursor.execute("SELECT * FROM TABLE(DBMS_XPLAN.DISPLAY)")
                 
                 execution_plan = cursor.fetchall()
-                
-                # Format execution plan
+
+               # Assuming execution_plan is your original list containing the execution plan data
+
                 formatted_execution_plan = []
+
+                # Iterate over the execution plan starting from index 5
                 for row in execution_plan[5:]:
+                    # Check if the row contains only dashes, indicating the end of the execution plan table
                     if '-' in row[0]:
-                        # If the row contains only dashes, append it as a single entry
-                        continue
+                        break
                     else:
+                        # Split the row by "|" and strip whitespace from each value
                         row_values = [value.strip() for value in row[0].split("|")]
-                        formatted_execution_plan.append({
-                            'Id': row_values[1],
-                            'Operation': row_values[2],
-                            'Name': row_values[3],
-                            'Rows': row_values[4],
-                            'Bytes': row_values[5],
-                            'Cost': row_values[6],
-                            'Time': row_values[7]
-                        })
+                        # Check if the row_values list has enough elements
+                        if len(row_values) >= 8:
+                            formatted_execution_plan.append({
+                                'Id': row_values[1],
+                                'Operation': row_values[2],
+                                'Name': row_values[3],
+                                'Rows': row_values[4],
+                                'Bytes': row_values[5],
+                                'Cost': row_values[6],
+                                'Time': row_values[7]
+                            })
+
+                print(formatted_execution_plan)
+
 
                 return jsonify({'result':data , 'columns': column_names, 'execution_plan': formatted_execution_plan})
             else:
