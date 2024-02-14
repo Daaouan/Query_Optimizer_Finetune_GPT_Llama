@@ -2,7 +2,8 @@ from flask import Flask, request, jsonify
 from database.oracle_connection import create_connection,close_connection
 import oracledb
 
-from gpt import generate_response_gpt
+from model import generate_response_gpt,generate_response_llama
+
 # from transformers impor AutoTokenizer, pipeline
 # from peft import AutoPeftModelForCausalLM
 
@@ -15,13 +16,17 @@ def hello_world():
     return "<p>Hello, World!</p>"
 
 
-@app.route('/chatbot', methods=['POST'])
-def chatbot():
+@app.route('/chatbot/gpt', methods=['POST'])
+def chatbot_gpt():
     query = request.json.get('query')
     chatbot_response = generate_response_gpt(query)
     return jsonify({'chatbot_response': chatbot_response})
 
-
+@app.route('/chatbot/llama', methods=['POST'])
+def chatbot_llama():
+    query = request.json.get('query')
+    chatbot_response = generate_response_llama(query)
+    return jsonify({'chatbot_response': chatbot_response})
 
 
 @app.route('/results', methods=['GET'])
@@ -60,7 +65,7 @@ def query_results():
 # tokenizer.padding_side = "right"
 # pipe = pipeline(task="text-generation", model=model, tokenizer=tokenizer, max_length=300)
             
-            
+
 port_number = 5000
 
 if __name__ == '__main__':

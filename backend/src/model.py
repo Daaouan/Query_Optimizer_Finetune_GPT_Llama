@@ -28,6 +28,41 @@ def generate_response_gpt(query):
     )
 
     chatbot_response=dict(response)['choices'][0].message.content
-    print(chatbot_response)
+    chatbot_response = chatbot_response.replace("ShawGPT: ", "")
+    chatbot_response = chatbot_response.replace(" -ShawGPT", "")
 
     return chatbot_response
+
+
+def generate_response_llama(query):
+
+    client = OpenAI(
+    api_key = os.getenv("LLAMA2_API_KEY"),
+    base_url = os.getenv("LLAMA2_URL")
+    )
+
+    response = client.chat.completions.create(
+        model="llama-13b-chat",
+        messages=[
+            {"role": "system", "content": """You are a chatbot specializing in optimizing SQL queries within the Oracle syntax ecosystem. Your primary functionality is to receive SQL queries from users and provide them with optimized versions for better performance."""},
+            {"role": "user", "content": query}
+        ]
+
+    )
+
+    chatbot_response=response.choices[0].message.content
+    return chatbot_response
+
+
+
+# from transformers impor AutoTokenizer, pipeline
+# from peft import AutoPeftModelForCausalLM
+
+# def generate_response_llama(query):
+#     prompt = "You are a chatbot specializing in optimizing SQL queries within the Oracle syntax ecosystem. Your primary functionality is to provide optimized query. "
+#     result = pipe(f"<s>[INST] {prompt+query} [/INST]")
+#     chatbot_response = result[0]['generated_text']
+
+#     print(chatbot_response)
+
+#     return chatbot_response
