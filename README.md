@@ -1,1 +1,2 @@
-# Neo_Optimizer_Finetune_GPT
+# Neo_Optimizer 
+##Finetune GPT & Llama2 for query optimization
