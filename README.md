@@ -15,9 +15,9 @@
 
 ## Contributors:
 
-- [DAAOUAN Mohammed](#https://github.com/Daaouan-Mohammed)
-- [FRIKH Said](#https://github.com/Frikh-Said)
-- [BOUDENJAL Mohcine](#https://github.com/boudenjal-mohcine)
+- [DAAOUAN Mohammed](https://github.com/Daaouan-Mohammed)
+- [FRIKH Said](https://github.com/Frikh-Said)
+- [BOUDENJAL Mohcine](https://github.com/boudenjal-mohcine)
 
 ## Project Overview:
 
