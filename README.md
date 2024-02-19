@@ -19,7 +19,7 @@
 - [FRIKH Said](https://github.com/Frikh-Said)
 - [BOUDENJAL Mohcine](https://github.com/boudenjal-mohcine)
 
-## Demo: - [Youtube]([https://github.com/boudenjal-mohcine](https://www.youtube.com/watch?v=LAmwkflZOSY))
+## Demo: https://www.youtube.com/watch?v=LAmwkflZOSY
 
 ## Project Overview:
 
