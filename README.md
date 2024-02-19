@@ -19,6 +19,8 @@
 - [FRIKH Said](https://github.com/Frikh-Said)
 - [BOUDENJAL Mohcine](https://github.com/boudenjal-mohcine)
 
+## Demo: - [Youtube]([https://github.com/boudenjal-mohcine](https://www.youtube.com/watch?v=LAmwkflZOSY))
+
 ## Project Overview:
 
 This project focuses on optimizing SQL queries within Oracle databases by integrating cutting-edge technologies, such as the OpenAI GPT model and the Llama tool. The aim is to enhance query performance and adaptability while providing a seamless user experience.
